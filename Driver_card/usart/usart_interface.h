@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void uart_send(uint8_t* data, uint8_t size);
+void uart_send(uint8_t* data, uint16_t size);
 
 #endif

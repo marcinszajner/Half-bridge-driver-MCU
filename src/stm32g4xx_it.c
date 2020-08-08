@@ -70,11 +70,7 @@ void SysTick_Handler(void)
       uint16_t buffer_size = get_data_buffer_size();
       uint8_t* buffer_data_ptr = get_adc_data_orgin();
       calculate_and_add_crc(buffer_data_ptr);
-      if(HAL_UART_Transmit_DMA(&huart2, buffer_data_ptr, buffer_size) != HAL_OK)
-      {
-        /* Transfer error in transmission process */
-        Error_Handler();
-      }
+      uart_send(buffer_data_ptr, buffer_size);
 
     }
     else
