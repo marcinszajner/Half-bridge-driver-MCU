@@ -38,4 +38,6 @@ extern ADC_HandleTypeDef AdcHandle;
 extern uint8_t usart_rx_dma_buffer[64];
 extern uint8_t scratchpad[100];
 
+extern DMA_HandleTypeDef hdma_adc1;
+
 #endif

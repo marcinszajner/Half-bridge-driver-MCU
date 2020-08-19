@@ -12,6 +12,8 @@ ADC_MultiModeTypeDef MultiModeConfig;
 ADC_InjectionConfTypeDef InjectionConfig;
 ADC_HandleTypeDef AdcHandle;
 
+DMA_HandleTypeDef hdma_adc1;
+
 uint8_t usart_rx_dma_buffer[64];
 
 uint8_t scratchpad[100];

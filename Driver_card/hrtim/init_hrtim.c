@@ -170,13 +170,13 @@ void DC_HRTIM1_Init(void)
                                   HRTIM_COMPAREUNIT_4,
                                   &compare_config);
 
-  adc_trigger_config.Trigger = HRTIM_ADCTRIGGEREVENT24_TIMERF_CMP2
-                             + HRTIM_ADCTRIGGEREVENT24_TIMERF_CMP3
-                             + HRTIM_ADCTRIGGEREVENT24_TIMERF_CMP4
-                             + HRTIM_ADCTRIGGEREVENT24_TIMERF_PERIOD; //Set period event as adc triger to 50% and 100% of period (180 and 360 degrees)
+  adc_trigger_config.Trigger = HRTIM_ADCTRIGGEREVENT13_TIMERF_CMP2
+                             + HRTIM_ADCTRIGGEREVENT13_TIMERF_CMP3
+                             + HRTIM_ADCTRIGGEREVENT13_TIMERF_CMP4
+                             + HRTIM_ADCTRIGGEREVENT13_TIMERF_PERIOD; //Set period event as adc triger to 50% and 100% of period (180 and 360 degrees)
   adc_trigger_config.UpdateSource = HRTIM_ADCTRIGGERUPDATE_TIMER_F;
 
-  HAL_HRTIM_ADCTriggerConfig(&hhrtim1, HRTIM_ADCTRIGGER_2, &adc_trigger_config);
+  HAL_HRTIM_ADCTriggerConfig(&hhrtim1, HRTIM_ADCTRIGGER_1, &adc_trigger_config);
 
   HAL_HRTIM_SoftwareUpdate(&hhrtim1,
                         HRTIM_TIMERUPDATE_MASTER

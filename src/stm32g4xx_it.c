@@ -61,7 +61,7 @@ void SysTick_Handler(void)
 {
   HAL_IncTick();
 
-  if(get_request_status() && buffer_lock)
+  if(get_request_status() && !get_buffer_lock())
   {
     if(is_acquisition_done())
     {
@@ -75,18 +75,7 @@ void SysTick_Handler(void)
     }
     else
     {
-      uint32_t frequency = get_actual_frequency();
-      int32_t frequency_step =  get_frequency_step();
-      if(frequency_step != 0)
-      {
-        uint32_t new_frequency = frequency + frequency_step;
-        change_frequency(new_frequency);
-        set_actual_frequency(new_frequency);
-      }
-      sample_buffer_pointer = (uint16_t*)get_next_data_buffer();
-      buffer_size = get_packet_size();
-      increment_actual_packet();
-      buffer_lock = false;
+      acquisite_samples();
     }
   }
 
@@ -127,6 +116,38 @@ void DMA1_Channel2_IRQHandler(void)
   if(tc_ie && dma_isr_tcie2)
   {
 	hdma_usart2_rx.DmaBaseAddress->IFCR = DMA_IFCR_CTCIF2;
+  }
+}
+
+void DMA1_Channel3_IRQHandler(void)
+{
+
+  uint32_t flag_it = hdma_adc1.DmaBaseAddress->ISR;
+
+  uint32_t dma_isr_tcie3 = (READ_BIT(flag_it, DMA_ISR_TCIF3) == (DMA_ISR_TCIF3)) ? 1UL : 0UL;
+
+  if(dma_isr_tcie3)
+  {
+	uint32_t timeout = 1000;
+	hdma_adc1.DmaBaseAddress->IFCR = DMA_IFCR_CTCIF3;
+	hdma_adc1.State = HAL_DMA_STATE_READY;
+	__HAL_UNLOCK(&hdma_adc1);
+
+	do
+	{
+    LL_ADC_REG_StopConversion(AdcHandle.Instance);
+	LL_ADC_Disable(AdcHandle.Instance);
+	while(LL_ADC_IsDisableOngoing(AdcHandle.Instance))
+	{
+	  if (timeout == 0)
+	  {
+	    break;
+	  }
+	  timeout--;
+	}
+	} while(LL_ADC_IsDisableOngoing(AdcHandle.Instance));
+
+	set_buffer_lock(false);
   }
 }
 

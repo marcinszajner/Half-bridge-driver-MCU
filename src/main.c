@@ -1,6 +1,7 @@
 #include "main.h"
 #include "stm32g4xx_ll_dma.h"
 #include "rcc_init.h"
+#include "dma_init.h"
 #include "adc_init.h"
 #include "crc.h"
 
@@ -44,11 +45,14 @@ static void MX_GPIO_Init(void)
 
 }
 
+uint16_t temp_array[30];
+
 int main(void)
 {
   rcc_init();
   MX_GPIO_Init();
   DC_HRTIM1_Init();
+  dma_init();
   adc_init();
   USART2_DMA_Init();
   crc_init();
@@ -61,6 +65,23 @@ int main(void)
     HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
     /* Insert delay 100 ms */
     HAL_Delay(100);
+
+//    if (prepare_acquisite_n_samples_with_dma(&AdcHandle,
+//                          (uint32_t *)&temp_array,
+//                          15
+//                         ) != HAL_OK)
+//    {
+//  	  while(0){}
+//    }
+//
+//    volatile uint32_t a = 0;
+//    hhrtim1.Instance->sMasterRegs.MICR |= HRTIM_MICR_MREP;
+//    while(!(hhrtim1.Instance->sMasterRegs.MISR & HRTIM_MISR_MREP))
+//    {
+//      a++;
+//    }
+//
+//    LL_ADC_REG_StartConversion(AdcHandle.Instance);
 
   }
 }
