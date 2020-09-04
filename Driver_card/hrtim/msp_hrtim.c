@@ -1,14 +1,14 @@
 #include "msp_hrtim.h"
 
 /**
-* @brief HRTIM MSP Initialization
-* This function configures the hardware resources used in this example
-* @param hhrtim: HRTIM handle pointer
-* @retval None
-*/
-void HAL_HRTIM_MspInit(HRTIM_HandleTypeDef* hhrtim)
+ * @brief HRTIM MSP Initialization
+ * This function configures the hardware resources used in this example
+ * @param hhrtim: HRTIM handle pointer
+ * @retval None
+ */
+void HAL_HRTIM_MspInit(HRTIM_HandleTypeDef *hhrtim)
 {
-  if(hhrtim->Instance==HRTIM1)
+  if (hhrtim->Instance == HRTIM1)
   {
     /* Peripheral clock enable */
     __HAL_RCC_HRTIM1_CLK_ENABLE();

@@ -8,7 +8,7 @@
 
 void USART2_DMA_Init(void)
 {
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = { 0 };
 
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
   PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
@@ -44,24 +44,27 @@ void USART2_DMA_Init(void)
 
   if (HAL_UART_Init(&huart2) != HAL_OK)
   {
-  usart_error_handler();
+    usart_error_handler();
   }
-  if (HAL_UARTEx_SetTxFifoThreshold(&huart2, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart2, UART_TXFIFO_THRESHOLD_1_8)
+      != HAL_OK)
   {
-  usart_error_handler();
+    usart_error_handler();
   }
-  if (HAL_UARTEx_SetRxFifoThreshold(&huart2, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart2, UART_RXFIFO_THRESHOLD_1_8)
+      != HAL_OK)
   {
-  usart_error_handler();
+    usart_error_handler();
   }
   if (HAL_UARTEx_DisableFifoMode(&huart2) != HAL_OK)
   {
-  usart_error_handler();
+    usart_error_handler();
   }
 
   __HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 
-  if (HAL_UART_Receive_DMA(&huart2, (uint8_t *)usart_rx_dma_buffer, ARRAY_LEN(usart_rx_dma_buffer)) != HAL_OK)
+  if (HAL_UART_Receive_DMA(&huart2, (uint8_t*) usart_rx_dma_buffer,
+      ARRAY_LEN(usart_rx_dma_buffer)) != HAL_OK)
   {
     /* Transfer error in reception process */
     usart_error_handler();

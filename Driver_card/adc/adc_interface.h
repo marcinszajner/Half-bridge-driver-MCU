@@ -20,15 +20,7 @@ typedef struct data_acq_con_ar_t
     int32_t  fequency_step;
 } data_acq_con_ar_t;
 
-typedef struct init_data_acq_t
-{
-    uint16_t  packet_size;
-    uint16_t  n_packet;
-    int32_t  fequency_step;
-    uint32_t actual_frequency;
-} init_data_acq_t;
-
-void init_data_acq_struct(init_data_acq_t* init_data_acq);
+void init_data_acq_struct(protocol_data_req* req);
 uint8_t* get_adc_data_orgin();
 uint8_t* get_actual_data_buffer();
 bool get_request_status();

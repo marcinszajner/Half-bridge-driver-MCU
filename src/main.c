@@ -15,7 +15,7 @@
 
 static void MX_GPIO_Init(void)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  GPIO_InitTypeDef GPIO_InitStruct = { 0 };
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -59,30 +59,11 @@ int main(void)
 
   run();
 
-  while (1)
+  while(1)
   {
-
     HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
     /* Insert delay 100 ms */
     HAL_Delay(100);
-
-//    if (prepare_acquisite_n_samples_with_dma(&AdcHandle,
-//                          (uint32_t *)&temp_array,
-//                          15
-//                         ) != HAL_OK)
-//    {
-//  	  while(0){}
-//    }
-//
-//    volatile uint32_t a = 0;
-//    hhrtim1.Instance->sMasterRegs.MICR |= HRTIM_MICR_MREP;
-//    while(!(hhrtim1.Instance->sMasterRegs.MISR & HRTIM_MISR_MREP))
-//    {
-//      a++;
-//    }
-//
-//    LL_ADC_REG_StartConversion(AdcHandle.Instance);
-
   }
 }
 
