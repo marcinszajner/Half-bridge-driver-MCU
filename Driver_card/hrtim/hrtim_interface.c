@@ -37,7 +37,7 @@ uint32_t get_frequency()
   return frequency;
 }
 
-void run(void)
+void run_hrtim_output(void)
 {
   HAL_HRTIM_WaveformOutputStart(&hhrtim1,
       HRTIM_OUTPUT_TA1 + HRTIM_OUTPUT_TA2 + HRTIM_OUTPUT_TD1
