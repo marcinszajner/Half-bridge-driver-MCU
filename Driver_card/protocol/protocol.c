@@ -50,12 +50,12 @@ void execute_protocol(void *ptr)
 
       break;
     default:
-      uart_send((uint8_t*) Message_unknown, strlen(Message_unknown));
+      uart1_send((uint8_t*) Message_unknown, strlen(Message_unknown));
     }
     break;
 
   default:
-    uart_send((uint8_t*) Message_unknown, strlen(Message_unknown));
+    uart1_send((uint8_t*) Message_unknown, strlen(Message_unknown));
   }
 }
 

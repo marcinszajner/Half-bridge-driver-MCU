@@ -2,10 +2,14 @@
 #include "stm32g4xx_ll_dma.h"
 #include "init_hrtim.h"
 #include "usart_init.h"
+#include "usart_interface.h"
 #include "rcc_init.h"
 #include "dma_init.h"
 #include "adc_init.h"
 #include "crc.h"
+#include <string.h>
+
+char AT[] = "AT+BAUD8"; // set baud rate to 115200
 
 static void MX_GPIO_Init(void)
 {
@@ -46,6 +50,8 @@ void init_periph()
   DC_HRTIM1_Init();
   dma_init();
   adc_init();
-  USART2_DMA_Init();
+  USART1_DMA_Init(9600); // HC-06 default baud rate
+  uart1_send((uint8_t*) AT, strlen(AT));
+  USART1_DMA_Init(115200); // reinicjalize with new baud rate
   crc_init();
 }

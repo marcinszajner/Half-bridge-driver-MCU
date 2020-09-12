@@ -1,6 +1,8 @@
 #include "rcc_init.h"
 #include "stm32g4xx_hal.h"
 #include "stm32g4xx_ll_pwr.h"
+#include "stm32g4xx_hal_rcc_ex.h"
+#include "stm32g4xx_hal_rcc.h"
 
 static void Error_Handler(void)
 {
@@ -61,6 +63,8 @@ void rcc_init(void)
   __HAL_RCC_SYSCFG_CLK_ENABLE();
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_RCC_CRC_CLK_ENABLE();
+  __HAL_RCC_DMAMUX1_CLK_ENABLE();
+  __HAL_RCC_DMA1_CLK_ENABLE();
 
   LL_PWR_DisableDeadBatteryPD();
 

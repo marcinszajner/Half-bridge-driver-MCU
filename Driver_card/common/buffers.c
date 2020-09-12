@@ -4,9 +4,11 @@
 HRTIM_HandleTypeDef hhrtim1;
 HRTIM_CompareCfgTypeDef compare_config;
 HRTIM_ADCTriggerCfgTypeDef adc_trigger_config;
-UART_HandleTypeDef huart2;
-DMA_HandleTypeDef hdma_usart2_rx;
-DMA_HandleTypeDef hdma_usart2_tx;
+
+UART_HandleTypeDef huart1;
+DMA_HandleTypeDef hdma_usart1_rx;
+DMA_HandleTypeDef hdma_usart1_tx;
+
 perypherial_state_t perypherial_state;
 ADC_MultiModeTypeDef MultiModeConfig;
 ADC_InjectionConfTypeDef InjectionConfig;

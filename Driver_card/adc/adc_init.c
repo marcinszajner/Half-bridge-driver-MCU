@@ -1,5 +1,4 @@
 #include "adc_init.h"
-#include "adc_error_handle.h"
 #include "stm32g4xx_hal.h"
 #include "buffers.h"
 #include "msp_adc.h"
@@ -46,7 +45,7 @@ void adc_init(void)
   sConfig.Offset = 0;
   if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
   {
-    Error_Handler();
+    adc_error_handler();
   }
 
   /* Run the ADC calibration in single-ended mode */

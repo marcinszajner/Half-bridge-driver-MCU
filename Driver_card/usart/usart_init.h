@@ -3,6 +3,6 @@
 
 #include "msp_uart.h"
 
-void USART2_DMA_Init(void);
+void USART1_DMA_Init(uint32_t baudRate);
 
 #endif

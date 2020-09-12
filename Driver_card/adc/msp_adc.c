@@ -31,7 +31,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
     hdma_adc1.Init.Priority = DMA_PRIORITY_VERY_HIGH;
     if (HAL_DMA_Init(&hdma_adc1) != HAL_OK)
     {
-      usart_error_handler();
+      adc_error_handler();
     }
 
     __HAL_LINKDMA(hadc,DMA_Handle,hdma_adc1);
