@@ -97,18 +97,18 @@ void DC_HRTIM1_Init(void)
   }
 
 // For 16 sample per cycle
-//  compare_config.CompareValue = (25 * FREQUENCY)/100;
-//  HAL_HRTIM_WaveformCompareConfig(&hhrtim1,
-//                                  HRTIM_TIMERINDEX_MASTER,
-//                                  HRTIM_COMPAREUNIT_2,
-//                                  &compare_config);
-//
-//  /* Compare 3 is used for SR2 turn-on */
-//  compare_config.CompareValue = (75 * FREQUENCY)/100;
-//  HAL_HRTIM_WaveformCompareConfig(&hhrtim1,
-//                                  HRTIM_TIMERINDEX_MASTER,
-//                                  HRTIM_COMPAREUNIT_3,
-//                                  &compare_config);
+  compare_config.CompareValue = (25 * FREQUENCY)/100;
+  HAL_HRTIM_WaveformCompareConfig(&hhrtim1,
+                                  HRTIM_TIMERINDEX_MASTER,
+                                  HRTIM_COMPAREUNIT_2,
+                                  &compare_config);
+
+  /* Compare 3 is used for SR2 turn-on */
+  compare_config.CompareValue = (75 * FREQUENCY)/100;
+  HAL_HRTIM_WaveformCompareConfig(&hhrtim1,
+                                  HRTIM_TIMERINDEX_MASTER,
+                                  HRTIM_COMPAREUNIT_3,
+                                  &compare_config);
   //////////////////////////////
 
   pTimerCfg.HalfModeEnable = HRTIM_HALFMODE_DISABLED;
@@ -133,7 +133,7 @@ void DC_HRTIM1_Init(void)
   HAL_HRTIM_WaveformTimerConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_D, &pTimerCfg);
 
   pTimerCfg.ResetTrigger = HRTIM_TIMRESETTRIGGER_MASTER_PER
-      + HRTIM_TIMRESETTRIGGER_MASTER_CMP1; // for 16 sample per cycle + HRTIM_TIMRESETTRIGGER_MASTER_CMP2 + HRTIM_TIMRESETTRIGGER_MASTER_CMP3;
+      + HRTIM_TIMRESETTRIGGER_MASTER_CMP1 + HRTIM_TIMRESETTRIGGER_MASTER_CMP2 + HRTIM_TIMRESETTRIGGER_MASTER_CMP3;
   HAL_HRTIM_WaveformTimerConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_F, &pTimerCfg);
 
   pOutputCfg.Polarity = HRTIM_OUTPUTPOLARITY_HIGH;
