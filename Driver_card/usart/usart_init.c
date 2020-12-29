@@ -1,6 +1,7 @@
 #include "usart_init.h"
 #include "usart_error_handle.h"
-#include "buffers.h"
+#include "usart_structs.h"
+#include "common_macros.h"
 #include "stm32g474xx.h"
 #include "stm32g4xx_hal_cortex.h"
 

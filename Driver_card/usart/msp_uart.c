@@ -1,6 +1,6 @@
 #include "msp_uart.h"
 #include "usart_error_handle.h"
-#include "buffers.h"
+#include "usart_structs.h"
 
 /**
  * @brief UART MSP Initialization

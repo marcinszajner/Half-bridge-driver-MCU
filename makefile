@@ -56,7 +56,7 @@ clean:
 	
 .PHONY: flash
 flash:
-	openocd -f ../OpenOCD-20200114-0.10.0/share/openocd/scripts/board/st_nucleo_g4.cfg -c init -c "reset halt" -c "flash write_image erase HB.elf" -c "verify_image HB.elf" -c reset -c shutdown
+	openocd -f ../OpenOCD-20200729-0.10.0/share/openocd/scripts/board/st_nucleo_g4.cfg -c init -c "reset halt" -c "flash write_image erase HB.elf" -c "verify_image HB.elf" -c reset -c shutdown
 
 .PHONY: cleanall
 cleanall:

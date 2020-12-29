@@ -1,4 +1,5 @@
 #include "adc_interface.h"
+#include "adc_structs.h"
 #include "hrtim_interface.h"
 #include "protocol.h"
 
@@ -167,4 +168,32 @@ void acquisite_samples()
 
   /* Exit critical section: restore previous priority mask */
   __set_PRIMASK(primask_bit);
+}
+
+uint32_t is_adc1_dma_tci()
+{
+  return (READ_BIT(hdma_adc1.DmaBaseAddress->ISR, DMA_ISR_TCIF3) == (DMA_ISR_TCIF3)) ? 1UL : 0UL;
+}
+
+void reset_adc_dma_tci()
+{
+  uint32_t timeout = 1000;
+      hdma_adc1.DmaBaseAddress->IFCR = DMA_IFCR_CTCIF3;
+      hdma_adc1.State = HAL_DMA_STATE_READY;
+      __HAL_UNLOCK(&hdma_adc1);
+
+      do
+      {
+        LL_ADC_REG_StopConversion(AdcHandle.Instance);
+        LL_ADC_Disable(AdcHandle.Instance);
+        while(LL_ADC_IsDisableOngoing(AdcHandle.Instance))
+        {
+          if (timeout == 0)
+          {
+            break;
+          }
+          timeout--;
+        }
+      } while(LL_ADC_IsDisableOngoing(AdcHandle.Instance));
+
 }

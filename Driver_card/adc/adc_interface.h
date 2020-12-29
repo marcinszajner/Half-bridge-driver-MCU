@@ -37,4 +37,7 @@ bool get_buffer_lock();
 HAL_StatusTypeDef prepare_acquisite_n_samples_with_dma(ADC_HandleTypeDef *hadc, uint32_t *pData, uint32_t Length);
 void acquisite_samples();
 
+uint32_t is_adc1_dma_tci();
+void reset_adc_dma_tci();
+
 #endif

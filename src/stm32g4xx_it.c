@@ -1,11 +1,11 @@
 #include "stm32g4xx_it.h"
 
-#include "../Driver_card/crc/crc.h"
+#include "crc.h"
 #include "adc_interface.h"
 #include "hrtim_interface.h"
 #include "init_hrtim.h"
-#include "main.h"
 #include "protocol.h"
+#include "common_macros.h"
 #include "stdbool.h"
 #include "stm32g4xx_ll_dma.h"
 #include "usart_interface.h"
@@ -84,98 +84,34 @@ void EXTI15_10_IRQHandler(void)
 
 void DMA1_Channel1_IRQHandler(void)
 {
-  uint32_t source_it = hdma_usart1_tx.Instance->CCR;
-  uint32_t flag_it = hdma_usart1_tx.DmaBaseAddress->ISR;
-
-  uint32_t tc_ie =
-      (READ_BIT(source_it, DMA_CCR_TCIE) == DMA_CCR_TCIE) ? 1UL : 0UL;
-  uint32_t dma_isr_tcie1 =
-      (READ_BIT(flag_it, DMA_ISR_TCIF1) == (DMA_ISR_TCIF1)) ? 1UL : 0UL;
-
-  if (tc_ie && dma_isr_tcie1)
+  if (is_usart1_dma_tx_tci())
   {
-    hdma_usart1_tx.State = HAL_DMA_STATE_READY;
-    huart1.gState = HAL_UART_STATE_READY;
-    __HAL_UNLOCK(&hdma_usart1_tx);
-    hdma_usart1_tx.DmaBaseAddress->IFCR = DMA_IFCR_CTCIF1;
+    reset_usart1_dma_tx_tci();
   }
 }
 
 void DMA1_Channel2_IRQHandler(void)
 {
-  uint32_t source_it = hdma_usart1_rx.Instance->CCR;
-  uint32_t flag_it = hdma_usart1_rx.DmaBaseAddress->ISR;
-
-  uint32_t tc_ie =
-      (READ_BIT(source_it, DMA_CCR_TCIE) == DMA_CCR_TCIE) ? 1UL : 0UL;
-  uint32_t dma_isr_tcie2 =
-      (READ_BIT(flag_it, DMA_ISR_TCIF2) == (DMA_ISR_TCIF2)) ? 1UL : 0UL;
-
-  if (tc_ie && dma_isr_tcie2)
+  if (is_usart1_dma_rx_tci())
   {
-    hdma_usart1_rx.DmaBaseAddress->IFCR = DMA_IFCR_CTCIF2;
+    reset_usart1_dma_rx_tci();
   }
 }
 
 void DMA1_Channel3_IRQHandler(void)
 {
-  uint32_t flag_it = hdma_adc1.DmaBaseAddress->ISR;
-
-  uint32_t dma_isr_tcie3 =
-      (READ_BIT(flag_it, DMA_ISR_TCIF3) == (DMA_ISR_TCIF3)) ? 1UL : 0UL;
-
-  if (dma_isr_tcie3)
+  if (is_adc1_dma_tci())
   {
-    uint32_t timeout = 1000;
-    hdma_adc1.DmaBaseAddress->IFCR = DMA_IFCR_CTCIF3;
-    hdma_adc1.State = HAL_DMA_STATE_READY;
-    __HAL_UNLOCK(&hdma_adc1);
-
-    do
-    {
-      LL_ADC_REG_StopConversion(AdcHandle.Instance);
-      LL_ADC_Disable(AdcHandle.Instance);
-      while(LL_ADC_IsDisableOngoing(AdcHandle.Instance))
-      {
-        if (timeout == 0)
-        {
-          break;
-        }
-        timeout--;
-      }
-    } while(LL_ADC_IsDisableOngoing(AdcHandle.Instance));
-
+    reset_adc_dma_tci();
     set_buffer_lock(false);
   }
 }
 
 void USART1_IRQHandler(void)
 {
-  uint32_t isrflags = huart1.Instance->ISR;
-  uint32_t cr1its = huart1.Instance->CR1;
-
-  uint32_t idle_ie = (
-      (READ_BIT(cr1its, USART_CR1_IDLEIE) == (USART_CR1_IDLEIE)) ? 1UL : 0UL);
-  uint32_t usart_isr_idle = (
-      (READ_BIT(isrflags, USART_ISR_IDLE) == (USART_ISR_IDLE)) ? 1UL : 0UL);
-
-  /* Tx process is ended, restore huart->gState to Ready */
-  huart1.gState = HAL_UART_STATE_READY;
-
-  if (idle_ie && usart_isr_idle)
+  if (is_usart1_idle_interrupt())
   {
-    huart1.Instance->ICR = USART_ICR_IDLECF;
-
-    if ((uint32_t)(
-        ARRAY_LEN(usart_rx_dma_buffer)
-            - (huart1.hdmarx->Instance->CNDTR & DMA_CNDTR_NDT)))
-    {
-      execute_protocol(usart_rx_dma_buffer);
-    }
-
-    huart1.hdmarx->Instance->CCR &= ~DMA_CCR_EN;
-    huart1.hdmarx->Instance->CMAR = (uint32_t) usart_rx_dma_buffer;
-    huart1.hdmarx->Instance->CNDTR = ARRAY_LEN(usart_rx_dma_buffer);
-    huart1.hdmarx->Instance->CCR |= DMA_CCR_EN;
+    execute_protocol();
+    reset_usart1_dma_idle_interrupt();
   }
 }

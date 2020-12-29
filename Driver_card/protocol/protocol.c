@@ -3,7 +3,7 @@
 #include "stm32g4xx_hal_hrtim.h"
 #include "hrtim_interface.h"
 #include "usart_interface.h"
-#include "buffers.h"
+#include "usart_structs.h"
 #include "crc.h"
 
 #include <string.h>
@@ -20,9 +20,9 @@ static bool crc_check(void *ptr)
   return crc_ref == crc_result;
 }
 
-void execute_protocol(void *ptr)
+void execute_protocol()
 {
-  head_t *protocol_ptr = (head_t*) ptr;
+  head_t *protocol_ptr = (head_t*)usart_rx_dma_buffer;
   switch (protocol_ptr->signature)
   {
   case 0xaa:
@@ -38,7 +38,7 @@ void execute_protocol(void *ptr)
 
     case DATA_REQ:
     {
-      if (crc_check(ptr))
+      if (crc_check(usart_rx_dma_buffer))
       {
         change_frequency(((protocol_data_req*) protocol_ptr)->actual_frequency);
         init_data_acq_struct((protocol_data_req*) protocol_ptr);

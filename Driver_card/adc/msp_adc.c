@@ -1,5 +1,5 @@
 #include "msp_adc.h"
-#include "buffers.h"
+#include "adc_structs.h"
 #include "stm32g4xx_hal.h"
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
 {
