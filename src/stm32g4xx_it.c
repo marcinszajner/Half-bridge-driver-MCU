@@ -10,13 +10,7 @@
 #include "stm32g4xx_ll_dma.h"
 #include "usart_interface.h"
 
-// TODO create proffiling module
-#define start_timer() \
-  *((volatile uint32_t *)0xE0001000) = 0x40000001  // Enable CYCCNT register
-#define stop_timer() \
-  *((volatile uint32_t *)0xE0001000) = 0x40000000  // Disable CYCCNT register
-#define get_timer() \
-  *((volatile uint32_t *)0xE0001004)  // Get value from CYCCNT register
+
 
 void NMI_Handler(void)
 {
@@ -111,7 +105,8 @@ void USART1_IRQHandler(void)
 {
   if (is_usart1_idle_interrupt())
   {
-    execute_protocol();
+    //cmd is in uart recive buffer, copied by hardware
+    execute_cmd();
     reset_usart1_dma_idle_interrupt();
   }
 }

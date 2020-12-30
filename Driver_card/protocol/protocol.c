@@ -20,12 +20,11 @@ static bool crc_check(void *ptr)
   return crc_ref == crc_result;
 }
 
-void execute_protocol()
+void execute_cmd()
 {
   head_t *protocol_ptr = (head_t*)usart_rx_dma_buffer;
-  switch (protocol_ptr->signature)
+  if (crc_check(usart_rx_dma_buffer))
   {
-  case 0xaa:
     switch (protocol_ptr->type)
     {
     case UPDATE:
@@ -34,28 +33,22 @@ void execute_protocol()
       {
         change_frequency(((protocol_change*) protocol_ptr)->payload[0]);
       }
-      break;
+    break;
 
     case DATA_REQ:
     {
-      if (crc_check(usart_rx_dma_buffer))
-      {
-        change_frequency(((protocol_data_req*) protocol_ptr)->actual_frequency);
-        init_data_acq_struct((protocol_data_req*) protocol_ptr);
-      } else
-      {
-        //TODO send inv crc resp
-      }
-    }
-
-      break;
-    default:
-      uart1_send((uint8_t*) Message_unknown, strlen(Message_unknown));
+      change_frequency(((protocol_data_req*) protocol_ptr)->actual_frequency);
+      init_data_acq_struct((protocol_data_req*) protocol_ptr);
     }
     break;
 
-  default:
-    uart1_send((uint8_t*) Message_unknown, strlen(Message_unknown));
+    default:
+      uart1_send((uint8_t*) Message_unknown, strlen(Message_unknown));
+    }
+  }
+  else
+  {
+    //TODO send inv crc resp
   }
 }
 
