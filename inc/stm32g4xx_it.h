@@ -56,6 +56,7 @@ void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void) __attribute__((section (".ccmram")));
 void ADC1_2_IRQHandler(void) __attribute__((section (".ccmram")));
+void DMA1_Channel3_IRQHandler(void) __attribute__((section (".ccmram")));
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

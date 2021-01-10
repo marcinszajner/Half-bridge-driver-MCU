@@ -3,7 +3,6 @@
 #include "common_macros.h"
 #include "stm32g474xx.h"
 #include "stm32g4xx_hal_dma.h"
-#include "stm32g4xx_hal_hrtim.h"
 #include "stm32g4xx_hal_uart.h"
 #include "usart_structs.h"
 
@@ -52,4 +51,9 @@ uint32_t is_usart1_dma_rx_tci()
 void reset_usart1_dma_rx_tci()
 {
   hdma_usart1_rx.DmaBaseAddress->IFCR = DMA_IFCR_CTCIF2;
+}
+
+uint8_t* get_uart_rx_buff()
+{
+  return usart_rx_dma_buffer;
 }

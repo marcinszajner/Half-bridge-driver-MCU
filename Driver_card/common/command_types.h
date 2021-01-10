@@ -1,5 +1,5 @@
-#ifndef PROTOCOLS_TYPES_H_
-#define PROTOCOLS_TYPES_H_
+#ifndef DISPATCHER_TYPES_H_
+#define DISPATCHER_TYPES_H_
 
 #include <stdint.h>
 
@@ -24,23 +24,23 @@ typedef struct head_t
     uint32_t crc;
 } __attribute__ ((packed)) head_t;
 
-typedef struct protocol_change
+typedef struct cmd_change
 {
     head_t head;
     uint32_t bitfield;
     uint32_t payload[];
-} __attribute__ ((packed)) protocol_change;
+} __attribute__ ((packed)) cmd_change;
 
-typedef struct protocol_data_req
+typedef struct cmd_data_req
 {
     head_t head;
     uint32_t  packet_size;
     uint32_t  n_packet;
     int32_t   fequency_step;
     uint32_t  actual_frequency;
-}__attribute__ ((packed)) protocol_data_req;
+}__attribute__ ((packed)) cmd_data_req;
 
-typedef struct protocol_data_resp
+typedef struct cmd_data_resp
 {
     head_t head;
     uint32_t  packet_size;
@@ -48,6 +48,6 @@ typedef struct protocol_data_resp
     int32_t   fequency_step;
     uint32_t  actual_frequency;
     uint8_t payload[];
-}__attribute__ ((packed)) protocol_data_resp;
+}__attribute__ ((packed)) cmd_data_resp;
 
 #endif

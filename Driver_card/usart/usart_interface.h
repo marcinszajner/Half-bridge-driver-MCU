@@ -13,6 +13,6 @@ void reset_usart1_dma_tx_tci();
 uint32_t is_usart1_dma_rx_tci();
 void reset_usart1_dma_rx_tci();
 
-
+uint8_t* get_uart_rx_buff();
 
 #endif

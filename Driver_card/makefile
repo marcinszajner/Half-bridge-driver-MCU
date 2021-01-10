@@ -1,7 +1,7 @@
 PROJECT = driver_card
 TARGET ?= lib$(PROJECT).a
 SRC_DIRS ?= ./src
-COMPONENT = hrtim common usart protocol RCC adc crc dma
+COMPONENT = hrtim common usart dispatcher RCC adc crc dma msg
 LIBRARY_PATHS = ./../STM32G4xx_HAL_Driver
 LIBRARIES = 
 

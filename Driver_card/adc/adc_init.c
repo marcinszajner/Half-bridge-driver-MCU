@@ -1,8 +1,9 @@
 #include "adc_init.h"
+
+#include "dispatcher.h"
 #include "stm32g4xx_hal.h"
 #include "buffers.h"
 #include "msp_adc.h"
-#include "protocol.h"
 
 void adc_init(void)
 {

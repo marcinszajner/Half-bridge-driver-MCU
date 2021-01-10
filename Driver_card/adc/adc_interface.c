@@ -1,20 +1,23 @@
 #include "adc_interface.h"
 #include "adc_structs.h"
 #include "hrtim_interface.h"
-#include "protocol.h"
+#include "msg_interface.h"
+#include "adc_error_handle.h"
 
-uint8_t adc_data_buffer[sizeof(protocol_data_resp)
-    + (MAX_ADC_PACKET_SIZE * SAMPLE_SIZE * MAX_NUMBER_OF_PACKET)
-    + END_SIGNATURE_SIZE]; // header+payload(256 sample *2 byte * max of packet)+0x55555555
+typedef struct data_acq_con_ar_t
+{
+    bool request_active;
+    bool data_ready_send;
+    uint32_t packet_size;
+    uint32_t n_packet;
+    uint32_t actual_packet;
+    uint32_t actual_frequency;
+    int32_t  fequency_step;
+} data_acq_con_ar_t;
 
 data_acq_con_ar_t data_acq_con_ar;
 
-uint8_t* get_adc_data_orgin()
-{
-  return adc_data_buffer;
-}
-
-void init_data_acq_struct(protocol_data_req *req)
+void init_data_acq_struct(cmd_data_req *req)
 {
   data_acq_con_ar.fequency_step = req->fequency_step;
   data_acq_con_ar.n_packet = req->n_packet;
@@ -23,19 +26,15 @@ void init_data_acq_struct(protocol_data_req *req)
   data_acq_con_ar.actual_packet = 0;
   data_acq_con_ar.data_ready_send = false;
   data_acq_con_ar.request_active = true;
-  data_acq_con_ar.buffer_lock = false;
 
-  init_data_protocol_buffer(&data_acq_con_ar);
+  init_data_req_msg(data_acq_con_ar.packet_size,
+                    data_acq_con_ar.n_packet,
+                    data_acq_con_ar.fequency_step,
+                    data_acq_con_ar.actual_frequency);
+  acquisite_samples();
 }
 
-uint8_t* get_actual_data_buffer()
-{
-  return &adc_data_buffer[sizeof(protocol_data_resp)
-      + data_acq_con_ar.packet_size * SAMPLE_SIZE
-          * data_acq_con_ar.actual_packet];
-}
-
-bool get_request_status()
+bool get_data_request_status()
 {
   return data_acq_con_ar.request_active;
 }
@@ -60,13 +59,6 @@ uint32_t get_packet_size()
   return data_acq_con_ar.packet_size;
 }
 
-uint16_t get_data_buffer_size()
-{
-  head_t *head = (head_t*) adc_data_buffer;
-  uint16_t size = head->size;
-  return size;
-}
-
 int32_t get_frequency_step()
 {
   return data_acq_con_ar.fequency_step;
@@ -80,16 +72,6 @@ uint32_t get_actual_frequency()
 void set_actual_frequency(uint32_t actual_frequency)
 {
   data_acq_con_ar.actual_frequency = actual_frequency;
-}
-
-void set_buffer_lock(bool status)
-{
-  data_acq_con_ar.buffer_lock = status;
-}
-
-bool get_buffer_lock()
-{
-  return data_acq_con_ar.buffer_lock;
 }
 
 HAL_StatusTypeDef prepare_acquisite_n_samples_with_dma(ADC_HandleTypeDef *hadc,
@@ -128,6 +110,12 @@ HAL_StatusTypeDef prepare_acquisite_n_samples_with_dma(ADC_HandleTypeDef *hadc,
   return tmp_hal_status;
 }
 
+uint8_t* get_actual_position()
+{
+  return &get_adc_data_acq_resp_buf()[sizeof(cmd_data_resp) + data_acq_con_ar.packet_size * SAMPLE_SIZE
+                                     * data_acq_con_ar.actual_packet];
+}
+
 void acquisite_samples()
 {
   uint32_t frequency = get_actual_frequency();
@@ -139,20 +127,17 @@ void acquisite_samples()
     set_actual_frequency(new_frequency);
   }
 
-  uint16_t *sample_buffer_pointer;
+  uint8_t *sample_buffer_pointer;
   uint32_t buffer_size;
 
-  sample_buffer_pointer = (uint16_t*) get_actual_data_buffer();
+  sample_buffer_pointer = get_actual_position();
   buffer_size = get_packet_size();
   increment_actual_packet();
-  data_acq_con_ar.buffer_lock = true;
 
   if (prepare_acquisite_n_samples_with_dma(&AdcHandle,
       (uint32_t*) sample_buffer_pointer, buffer_size) != HAL_OK)
   {
-    while(1)
-    {
-    }
+    adc_error_handler();
   }
 
   /* Enter critical section: Disable interrupts to avoid any interruption during the loop */
@@ -196,4 +181,22 @@ void reset_adc_dma_tci()
         }
       } while(LL_ADC_IsDisableOngoing(AdcHandle.Instance));
 
+}
+
+void packet_acq_complete_handler()
+{
+  if (get_data_request_status())
+  {
+    if (is_acquisition_done())
+    {
+      send_data_acq_resp();
+      set_request_as_done();
+    }
+    else
+    {
+      acquisite_samples();
+    }
+  }
+
+  hhrtim1.Instance->sMasterRegs.MICR |= HRTIM_MICR_MREP;
 }

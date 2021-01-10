@@ -1,10 +1,10 @@
 PROJECT = HB
 TARGET ?= $(PROJECT).elf
-SRC_DIRS ?= ./src ./platform_src
+SRC_DIRS ?= ./src
 LIBRARY_PATHS = ./STM32G4xx_HAL_Driver
 #LIBRARIES = libdriver.a
 LINKER_SCRIPT = linker/STM32G474RETx_FLASH.ld
-COMPONENT = hrtim common usart protocol RCC adc crc dma
+COMPONENT = hrtim common usart dispatcher RCC adc crc dma msg
 
 CC 		:= arm-none-eabi-gcc
 AS 		:= arm-none-eabi-as
